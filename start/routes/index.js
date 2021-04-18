@@ -29,3 +29,8 @@ require('./auth')
  * Admin Routes
  */
 require('./admin')
+
+/**
+ * Client Routes
+ */
+require('./client')
