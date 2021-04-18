@@ -5,10 +5,6 @@ const Model = use('Model')
 
 class Product extends Model {
   images () {
-    return this.belongsTo('App/Models/Image')
-  }
-
-  images () {
     return this.belongsToMany('App/Models/Image')
   }
 

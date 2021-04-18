@@ -4,7 +4,7 @@
 const Model = use('Model')
 
 class Category extends Model {
-  image() {
+  image () {
     return this.belongsTo('App/Models/Image')
   }
 
