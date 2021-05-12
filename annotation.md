@@ -3,4 +3,4 @@
 # grant all privileges on ecommerce_realtime.* to 'learn'@'localhost';
 # flush privileges;
 
-parei no video 5 - 6. Autenticação do Sistema
+parei no video 1 - 9. Users Controller

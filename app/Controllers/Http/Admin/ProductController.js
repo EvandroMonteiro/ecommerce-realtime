@@ -39,9 +39,9 @@ class ProductController {
    */
   async store ({ request, response }) {
     try {
-      const { title, description, price, image_id } = request.all()
+      const { name, description, price, image_id } = request.all()
       const product = await Product.create({
-        title, description, price, image_id
+        name, description, price, image_id
       })
 
       return response.status(201).send(product)
@@ -77,9 +77,9 @@ class ProductController {
   async update ({ params: { id }, request, response }) {
     const product = await Product.findOrFail(id)
     try {
-      const { title, description, price, image_id } = request.all()
+      const { name, description, price, image_id } = request.all()
 
-      product.merge({ title, description, price, image_id })
+      product.merge({ name, description, price, image_id })
       await product.save()
 
       return response.send(product)
