@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Product = use('App/Models/Product')
+
 /**
  * Resourceful controller for interacting with products
  */
@@ -17,7 +19,14 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ request, response, view, pagination }) {
+    const name = request.input('name')
+    const query = Product.query()
+    if (name) {
+      query.where('name', 'LIKE', `%${name}%`)
+    }
+    const products = await query.paginate(pagination.page, pagination.limit)
+    return response.send(products)
   }
 
   /**
@@ -29,6 +38,18 @@ class ProductController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+    try {
+      const { title, description, price, image_id } = request.all()
+      const product = await Product.create({
+        title, description, price, image_id
+      })
+
+      return response.status(201).send(product)
+    } catch (error) {
+      return response.status(400).send({
+        message: 'Erro a processar a sua solicitação'
+      })
+    }
   }
 
   /**
@@ -40,7 +61,9 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params: { id }, request, response }) {
+    const product = await Product.findOrFail(id)
+    return response.send(product)
   }
 
   /**
@@ -51,7 +74,20 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params: { id }, request, response }) {
+    const product = await Product.findOrFail(id)
+    try {
+      const { title, description, price, image_id } = request.all()
+
+      product.merge({ title, description, price, image_id })
+      await product.save()
+
+      return response.send(product)
+    } catch (error) {
+      return response
+        .status(400)
+        .send({ message: 'Erro a processar a sua solicitação' })
+    }
   }
 
   /**
@@ -62,7 +98,16 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params: { id }, request, response }) {
+    const product = await Product.findOrFail(id)
+    try {
+      await product.delete()
+      return response.status(204).send()
+    } catch (error) {
+      return response
+        .status(500)
+        .send({ message: 'Erro a processar a sua solicitação!' })
+    }
   }
 }
 
